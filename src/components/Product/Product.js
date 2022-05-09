@@ -28,6 +28,21 @@ const Product = (props) => {
     return setCurrentPrice(props.basePrice + price);
   };
 
+  const summary = (props) => {
+    return console.log(
+      'Summary\n',
+      '=======\n',
+      'Name: ',
+      props.name + '\n',
+      'Price: ',
+      props.currentPrice + '\n',
+      'Size: ',
+      props.currentSize + '\n',
+      'Color: ',
+      props.currentColor
+    );
+  };
+
   return (
     <article className={styles.product}>
       <div className={styles.imageContainer}>
@@ -65,21 +80,27 @@ const Product = (props) => {
           <div className={styles.colors}>
             <h3 className={styles.optionLabel}>Colors</h3>
             <ul className={styles.choices}>
-              {props.colors.map((item) => (
+              {props.colors.map((item, index) => (
                 <li key={item}>
                   <button
                     type="button"
-                    onClick={() => setCurrentColor(item)}
+                    onClick={() => setCurrentColor(index)}
                     className={clsx(
                       prepareColorClassName(item),
-                      item === currentColor && styles.active
+                      index === currentColor && styles.active
                     )}
                   />
                 </li>
               ))}
             </ul>
           </div>
-          <Button className={styles.button}>
+          <Button
+            className={styles.button}
+            onClick={(e) => {
+              e.preventDefault();
+              summary(props);
+            }}
+          >
             <span className="fa fa-shopping-cart" />
           </Button>
         </form>
