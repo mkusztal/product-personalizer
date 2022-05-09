@@ -10,15 +10,22 @@ const Product = (props) => {
     name: PropTypes.string,
     title: PropTypes.string,
     basePrice: PropTypes.number,
+    sizes: PropTypes.array,
+    additionalPrice: PropTypes.number,
   };
 
-  const [colourTshirt, setColour] = useState(0);
-  const [sizeTshirt, setSize] = useState(0);
+  const [currentColor, setCurrentColor] = useState(0);
+  const [currentSize, setCurrentSize] = useState(0);
+  const [currentPrice, setCurrentPrice] = useState(props.basePrice);
 
-  const preparedColour = (color) => {
+  const prepareColorClassName = (color) => {
     return styles[
       'color' + color[0].toUpperCase() + color.substr(1).toLowerCase()
     ];
+  };
+
+  const getPrice = (price) => {
+    return setCurrentPrice(props.basePrice + price);
   };
 
   return (
@@ -27,13 +34,13 @@ const Product = (props) => {
         <img
           className={styles.image}
           alt={props.title}
-          src={`${process.env.PUBLIC_URL}/images/products/shirt-${props.name}--${props.colors[colourTshirt]}.jpg`}
+          src={`${process.env.PUBLIC_URL}/images/products/shirt-${props.name}--${props.colors[currentColor]}.jpg`}
         />
       </div>
       <div>
         <header>
           <h2 className={styles.name}>{props.title}</h2>
-          <span className={styles.price}>{props.basePrice}</span>
+          <span className={styles.price}>Price: {currentPrice}$</span>
         </header>
         <form>
           <div className={styles.sizes}>
@@ -43,8 +50,11 @@ const Product = (props) => {
                 <li key={index}>
                   <button
                     type="button"
-                    onClick={() => setSize(index)}
-                    className={clsx(index === sizeTshirt && styles.active)}
+                    onClick={() => {
+                      setCurrentSize(index);
+                      getPrice(size.additionalPrice);
+                    }}
+                    className={clsx(index === currentSize && styles.active)}
                   >
                     {size.name}
                   </button>
@@ -55,14 +65,14 @@ const Product = (props) => {
           <div className={styles.colors}>
             <h3 className={styles.optionLabel}>Colors</h3>
             <ul className={styles.choices}>
-              {props.colors.map((item, index) => (
+              {props.colors.map((item) => (
                 <li key={item}>
                   <button
                     type="button"
-                    onClick={() => setColour(index)}
+                    onClick={() => setCurrentColor(item)}
                     className={clsx(
-                      preparedColour(item),
-                      index === colourTshirt && styles.active
+                      prepareColorClassName(item),
+                      item === currentColor && styles.active
                     )}
                   />
                 </li>
