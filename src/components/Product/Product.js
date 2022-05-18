@@ -17,16 +17,17 @@ const Product = (props) => {
 
   const [currentColor, setCurrentColor] = useState(props.colors[0]);
   const [currentSize, setCurrentSize] = useState(props.sizes[0].name);
-  const [currentPrice, setCurrentPrice] = useState(props.basePrice);
-  const [addedPrice, setAddedPrice] = useState('');
 
-  const getPrice = (price) => {
-    return setAddedPrice(price);
-  };
-
-  useMemo(() => {
-    return setCurrentPrice(props.basePrice + addedPrice);
-  }, [props.basePrice, addedPrice]);
+  const currentPrice = useMemo(() => {
+    let additionalPrice = 0;
+    for (let size of props.sizes) {
+      if (size.name === currentSize) {
+        additionalPrice = size.additionalPrice;
+        break;
+      }
+    }
+    return props.basePrice + additionalPrice;
+  }, [props.basePrice, currentSize, props.sizes]);
 
   return (
     <article className={styles.product}>
@@ -39,15 +40,13 @@ const Product = (props) => {
         <ProductForm
           currentSize={currentSize}
           setCurrentSize={setCurrentSize}
-          getPrice={getPrice}
+          currentPrice={currentPrice}
           sizes={props.sizes}
           currentColor={currentColor}
           setCurrentColor={setCurrentColor}
           color={props.colors}
           summary={props.summary}
           title={props.title}
-          currentPrice={currentPrice}
-          setCurrentPrice={setCurrentPrice}
         />
       </div>
     </article>
